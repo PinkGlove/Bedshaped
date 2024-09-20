@@ -5,4 +5,4 @@ class Solution:
             columnNumber -= 1
             columnNumber, res = divmod(columnNumber, 26)
             ans += chr(res + ord("A"))
-        return "".join(ans[::-1])
+        return ans[::-1]
