@@ -1,22 +1,23 @@
 class Solution:
     def maxMoves(self, grid: List[List[int]]) -> int:
-        steps = [[0 for _ in range(len(grid[0]))] for _ in range(len(grid))]
-        for col in range(1, len(grid[0])):
-            walkable = False
-            for row in range(len(grid)):
-                curr = 0
-                if grid[row][col] > grid[row][col - 1]:
-                    if col == 1 or (col > 1 and steps[row][col - 1] != 0):
-                        curr = max(curr, steps[row][col - 1] + 1)
-                if row - 1 >= 0 and grid[row][col] > grid[row - 1][col - 1]:
-                    if col == 1 or (col > 1 and steps[row - 1][col - 1] != 0):
-                        curr = max(curr, steps[row - 1][col - 1] + 1)
-                if row + 1 < len(grid) and grid[row][col] > grid[row + 1][col - 1]:
-                    if col == 1 or (col > 1 and steps[row + 1][col - 1] != 0):
-                        curr = max(curr, steps[row + 1][col - 1] + 1)
-                steps[row][col] = curr
-                if curr != 0:
-                    walkable = True
-            if not walkable:
-                return max([steps[row][col - 1] for row in range(len(grid))])
-        return max([steps[row][-1] for row in range(len(grid))])
+        dirs = [-1, 0, 1]
+
+        def dfs(row, col, grid, dp):
+            M, N = len(grid), len(grid[0])
+            if dp[row][col] != -1:
+                return dp[row][col]
+            max_moves = 0
+            for d in dirs:
+                next_row, next_col = row + d, col + 1
+                if 0 <= next_row < M and 0 <= next_col < N and grid[row][col] < grid[next_row][next_col]:
+                    max_moves = max(max_moves, 1 + dfs(next_row, next_col, grid, dp))
+            dp[row][col] = max_moves
+            return max_moves
+        
+        M, N = len(grid), len(grid[0])
+        dp = [[-1] * N for _ in range(M)]
+        max_moves = 0
+        for i in range(M):
+            moves_required = dfs(i, 0, grid, dp)
+            max_moves = max(max_moves, moves_required)
+        return max_moves
