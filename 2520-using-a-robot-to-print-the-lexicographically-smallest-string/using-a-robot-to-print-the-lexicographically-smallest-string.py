@@ -1,13 +1,12 @@
 class Solution:
     def robotWithString(self, s: str) -> str:
-        cnt = Counter(s)
         t, res = [], []
-        minimum = 'a'
-        for c in s:
+        minimum = [0] * len(s)
+        minimum[-1] = 'z'
+        for i in range(len(s) - 1, 0, -1):
+            minimum[i - 1] = min(minimum[i], s[i])
+        for i, c in enumerate(s):
             t.append(c)
-            cnt[c] -= 1
-            while minimum <= 'z' and cnt[minimum] == 0:
-                minimum = chr(ord(minimum) + 1)
-            while t and t[-1] <= minimum:
+            while t and t[-1] <= minimum[i]:
                 res.append(t.pop())
         return "".join(res)
